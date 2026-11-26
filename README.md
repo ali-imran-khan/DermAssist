@@ -101,11 +101,11 @@ python efficientnet_b3/train.py
 
 ## Team
 
-- Muhammad Ali Imran Khan
-- Fatima Saqib
-- Neha Hamid
+Muhammad Ali Imran Khan, Fatima Saqib, Neha Hamid
 
 Supervisor: Dr. Jehangir Arshad · Co-supervisor: Dr. Usman Iqbal
 
-<!-- TODO: Contributions — who built what -->
+## Who did what
+
+This was a 3-person FYP. I did all of the technical work: dataset prep and the DIP pipeline, training and evaluating the EfficientNet/ViT models, the PyTorch → TFLite export, the Flask backend with the Drive/Firestore sync and FedAvg, and the Flutter app. One teammate wrote the report and the paper.
 <!-- TODO: Demo video link -->
