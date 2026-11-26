@@ -22,7 +22,6 @@ federated_blueprint = Blueprint("federated", __name__)
 SERVICE_ACCOUNT_FILE = config.SERVICE_ACCOUNT_FILE
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-# Simple configuration - no complex data structures
 MIN_SKIN_THRESHOLD = 20
 BLUR_THRESHOLD = 100
 MIN_BRIGHTNESS = 50
@@ -53,7 +52,7 @@ def safe_print(message):
         print("[LOG] Message encoding issue")
 
 def calculate_image_hash(image_data):
-    """Calculate SHA-256 hash of image data - compatible version"""
+    """SHA-256 of the raw image bytes, used for duplicate detection."""
     try:
         return hashlib.sha256(image_data).hexdigest()
     except Exception as e:
@@ -100,7 +99,7 @@ def detect_skin_pixels_simple(image_array):
         if not large_skin_region:
             return 0, skin_mask
 
-        # 👇 Dominant color filter (inline)
+        # dominant colour filter
         try:
             resized = cv2.resize(image_array, (100, 100))
             pixels = resized.reshape((-1, 3)).astype(np.float32)
@@ -128,9 +127,7 @@ def detect_skin_pixels_simple(image_array):
 
 
 def analyze_image_quality_simple(image_array):
-    """
-    Simple image quality analysis using basic OpenCV operations
-    """
+    """Brightness / contrast / blur checks."""
     try:
         if image_array is None or len(image_array.shape) != 3:
             return None
@@ -145,7 +142,7 @@ def analyze_image_quality_simple(image_array):
         brightness = float(np.mean(gray))
         contrast = float(np.std(gray))
         
-        # Simple quality flags - convert to native Python bool
+        # Firestore can't store numpy bools
         quality_info = {
             'blur_metric': float(blur_metric),
             'brightness': brightness,
@@ -163,7 +160,7 @@ def analyze_image_quality_simple(image_array):
         return None
 
 def check_duplicate_simple(image_hash, client_id):
-    """Simple duplicate check using the new filter syntax"""
+    """Check Firestore for an image with the same hash."""
     try:
         if not firestore_client or not image_hash:
             return False
@@ -178,7 +175,7 @@ def check_duplicate_simple(image_hash, client_id):
         return False
 
 def download_image_from_drive(file_id):
-    """Download image from Google Drive - compatible version"""
+    """Fetch an image from Drive by file id."""
     try:
         if not drive_service:
             return None
@@ -210,7 +207,7 @@ def upload_with_analysis_compatible():
             return jsonify({'error': 'No image file provided', 'debug': 'missing_image_file'}), 400
 
         image = request.files['image']
-        image_data = image.read()  # ✅ Single read
+        image_data = image.read()
         if not image_data:
             safe_print("[DEBUG] REJECTION: Empty image data")
             return jsonify({'error': 'Empty image data', 'debug': 'empty_image_data'}), 400

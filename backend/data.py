@@ -76,7 +76,7 @@ class ImageDownloader:
             raise Exception(f"Could not clean up existing dataset: {e}")
     
     def get_client_statistics(self):
-        """Get comprehensive client statistics"""
+        """Per-client image counts and label split."""
         if not self.firestore_client:
             return {'error': 'Firestore not initialized'}
         

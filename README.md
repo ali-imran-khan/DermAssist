@@ -4,7 +4,7 @@ Final Year Project, Department of Electrical & Computer Engineering, COMSATS Uni
 
 DermAssist is a mobile app that classifies skin images as **eczema** or **healthy**. The model is an EfficientNet-B3 that runs on the phone (TFLite), so a prediction works offline. Users can choose to contribute images, and a Flask backend then fine-tunes a global model with Federated Averaging (FedAvg).
 
-> Screening aid, not a medical diagnosis.
+This is a screening aid, not a diagnosis.
 
 ## Architecture
 
@@ -37,7 +37,7 @@ Flask backend ── Google Drive (images) + Firestore (metadata, quality metric
 | Healthy | 0.90 | 0.97 | 0.94 |
 | **Overall** | Accuracy **93.5%** (144/154) | AUC **0.989** | Macro F1 **0.94** |
 
-Phase 1 baselines reached about 99% accuracy. That test set was heavily imbalanced (1212 eczema vs 98 healthy), so the Phase 1 number overstates performance and is not the headline result. Plots are in `results/`.
+Phase 1 models hit ~99%, but that test set was 1212 eczema vs 98 healthy so the number is misleading. Phase 2 used a balanced split. Plots are in `results/`.
 
 ## Repository layout
 
@@ -66,11 +66,11 @@ export $(cat .env | xargs)
 python app.py                  # or: gunicorn app:app
 ```
 
-You need your own Google Cloud service account with Drive and Firestore access. Point `GOOGLE_APPLICATION_CREDENTIALS` at its key file. **Never commit the key.** `.gitignore` blocks `*.json`.
+You'll need your own Google Cloud service account (Drive + Firestore). Set `GOOGLE_APPLICATION_CREDENTIALS` to the key file and keep it out of git.
 
-Model weights (`eczema_classifier_latest.pth`, `.tflite`) are attached to the **GitHub Release**. Put them in `models/`.
+Weights (`.pth` and `.tflite`) are in the Releases tab, drop them into `models/`.
 
-Training scripts expect data under `data/` (for example `data/dermo`, `data/dermo_dip`). The dataset is not redistributed.
+Training scripts read from `data/` (`data/dermo`, `data/dermo_dip`). I can't share the dataset here.
 
 ```bash
 cd training && pip install -r requirements.txt
@@ -88,19 +88,16 @@ python efficientnet_b3/train.py
 
 ## Known limitations
 
-These are stated plainly on purpose:
+- The FL part is simulated. Images still get uploaded to Drive and each "client" is just a folder on the server. FedAvg itself works, but raw data isn't staying on the phone yet, so there's no real privacy benefit right now.
+- We only ran one federated round (1 client, 4 images). That proves the pipeline runs, nothing more.
+- `global_model.py` uses ImageNet normalization but `single_test.py` doesn't. Needs fixing.
+- Only eczema vs healthy for now, and it hasn't been clinically validated.
 
-- **Simulated federated learning.** Contributed images are uploaded to central storage, and "clients" are folders on the server. Real FL keeps raw data on the device and shares only weight updates. The FedAvg logic is real; the privacy guarantee is not there yet.
-- **Small FL run.** The recorded federated round used 1 client and 4 samples. It shows the pipeline works, not that FL improves accuracy.
-- **Preprocessing mismatch.** `global_model.py` fine-tunes with ImageNet normalization, but `single_test.py` inference does not normalize. Fix this before you trust backend predictions.
-- Binary task only: eczema vs healthy.
-- No clinical validation.
+## TODO
 
-## Roadmap
-
-- On-device training (true FL) with secure aggregation
-- Fix the normalization mismatch, then add tests
-- More classes (psoriasis, acne, etc.)
+- move training onto the device (actual FL)
+- fix normalization, add tests
+- more classes
 
 ## Team
 

@@ -84,16 +84,16 @@ def main():
     if not os.path.exists(tf_model_dir):
         os.makedirs(tf_model_dir)
     
-    # Step 1: Load PyTorch model
+    # Load PyTorch model
     pytorch_model = load_pytorch_model(pytorch_model_path)
     
-    # Step 2: Convert to ONNX
+    # Convert to ONNX
     onnx_model = convert_to_onnx(pytorch_model, onnx_path)
     
-    # Step 3: Convert ONNX to TensorFlow
+    # Convert ONNX to TensorFlow
     tf_model_path = convert_onnx_to_tf(onnx_model, tf_model_dir)
     
-    # Step 4: Convert TensorFlow to TFLite
+    # Convert TensorFlow to TFLite
     # Set quantize=True if you want a smaller, quantized model
     tflite_model_path = convert_tf_to_tflite(tf_model_path, tflite_path, quantize=False)
     

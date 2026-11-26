@@ -66,7 +66,7 @@ conf_matrix = confusion_matrix(y_true_np, y_pred_np)
 auc = roc_auc_score(y_true_np, y_scores_np)
 
 # Display results
-print(f"\n✅ Model testing completed.\n")
+print("\ndone")
 print(f"Accuracy:  {acc:.2f}%")
 print(f"Precision: {precision:.4f}")
 print(f"Recall:    {recall:.4f}")

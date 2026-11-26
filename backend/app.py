@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from uploader import federated_blueprint  # Make sure this file is uploader.py
+from uploader import federated_blueprint
 from data import ImageDownloader
 from global_model import FederatedEczemaLearning
 import os
@@ -87,7 +87,7 @@ def run_federated_learning():
     - Saves global model
     """
     try:
-        # Handle POST request from Flutter app
+        # called from the Flutter app
         if request.method == 'POST':
             data = request.get_json() or {}
             client_id = data.get('client_id')
