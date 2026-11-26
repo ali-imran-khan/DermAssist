@@ -1,0 +1,26 @@
+# Secrets — never commit
+*.json
+!**/package.json
+.env
+*secret*
+*key*.txt
+service_account*
+
+# Data and weights (weights go to GitHub Releases)
+data/
+client_data/
+validation_data/
+models/*.pth
+models/*.onnx
+models/*.tflite
+models/*.h5
+models/tf_saved_model/
+*.zip
+*.rar
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
